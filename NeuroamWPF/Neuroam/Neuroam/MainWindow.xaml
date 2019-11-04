@@ -1,0 +1,13 @@
+﻿<Window x:Class="Neuroam.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Neuroam"
+        mc:Ignorable="d"
+        Title="Neuroam" Height="450" Width="800">
+    <Grid>
+        <TextBox x:Name="MainTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="What's in your mind?" VerticalAlignment="Top" Width="792"/>
+        <ListBox x:Name="ResultsListBox" HorizontalAlignment="Left" Height="381" Margin="0,28,0,0" VerticalAlignment="Top" Width="782"/>
+    </Grid>
+</Window>
