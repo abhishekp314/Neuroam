@@ -7,7 +7,11 @@
         mc:Ignorable="d"
         Title="Neuroam" Height="450" Width="800">
     <Grid>
-        <TextBox x:Name="MainTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="What's in your mind?" VerticalAlignment="Top" Width="792"/>
+        <TextBox x:Name="MainTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="{Binding UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" VerticalAlignment="Top" Width="792">
+            <TextBox.InputBindings>
+                <KeyBinding Key="Enter" Command="{Binding MainTextBox_EnterKeyCommand}"/>
+            </TextBox.InputBindings>
+        </TextBox>
         <ListBox x:Name="ResultsListBox" HorizontalAlignment="Left" Height="381" Margin="0,28,0,0" VerticalAlignment="Top" Width="782"/>
     </Grid>
 </Window>
