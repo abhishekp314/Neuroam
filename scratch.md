@@ -1,8 +1,16 @@
-#Neuroam
-A tool that allows you to store and retrieve your search/findings.
+__Neuroam__
 
-#Language
-C#
+# What is Neuroam?
+It is a personal search engine to keep up with your day to day searching.
 
-#External APIs
-JsonCpp
+# Features
+> Store queries
+> Describe queries if not found
+
+# Tech
+> C#/C++
+> Newtonsoft.Json
+
+# Roadmap
+> Web Server
+> Android/IOS support
