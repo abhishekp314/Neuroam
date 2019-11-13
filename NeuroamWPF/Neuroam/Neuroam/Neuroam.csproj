@@ -70,6 +70,7 @@
     <Compile Include="Source\Constants.cs" />
     <Compile Include="Source\IO\JsonFile.cs" />
     <Compile Include="Source\KeyCommands.cs" />
+    <Compile Include="Source\QueryBuilder.cs" />
     <Compile Include="Source\QueryDictionary.cs" />
     <Compile Include="Source\QueryHandler.cs" />
     <Compile Include="Source\Utils\Logger.cs" />
