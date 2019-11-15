@@ -1,18 +1,18 @@
-__Neuroam Scratch__
+# Neuroam Scratch
 
-## Things TODO
+### Things TODO
 - [] Json interface to load/store data on disk
 - [] Dictionary of words in query (include words, words with special characters...)
 - [] Store the combination of id of words from dictionary
 - [] Weighing the transactions
 - [] Ranking the transactions
 
-## Dictonary
+### Dictonary
 A dictionary is collection of words with a unique id.
 
-## Transactions
+### Transactions
 A transaction is something that could be stored/retrevied from a json structure.
-# Attributes
+### Attributes
 * Datetime
 * Ids of Query (referenced from Dictionary)
 * Rank/Weight
