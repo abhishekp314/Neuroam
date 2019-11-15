@@ -1,16 +1,18 @@
-__Neuroam__
+__Neuroam Scratch__
 
-# What is Neuroam?
-It is a personal search engine to keep up with your day to day searching.
+## Things TODO
+- [] Json interface to load/store data on disk
+- [] Dictionary of words in query (include words, words with special characters...)
+- [] Store the combination of id of words from dictionary
+- [] Weighing the transactions
+- [] Ranking the transactions
 
-# Features
-> Store queries
-> Describe queries if not found
+## Dictonary
+A dictionary is collection of words with a unique id.
 
-# Tech
-> C#/C++
-> Newtonsoft.Json
-
-# Roadmap
-> Web Server
-> Android/IOS support
+## Transactions
+A transaction is something that could be stored/retrevied from a json structure.
+# Attributes
+* Datetime
+* Ids of Query (referenced from Dictionary)
+* Rank/Weight

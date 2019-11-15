@@ -32,5 +32,10 @@ namespace Neuroam
             m_QueryDictionary.Add(CurrentQuery);
             m_ResultsListBox.ItemsSource = m_QueryDictionary.Find(CurrentQuery);
         }
+
+        public void OnClose()
+        {
+            m_QueryDictionary.OnClose();
+        }
     }
 }

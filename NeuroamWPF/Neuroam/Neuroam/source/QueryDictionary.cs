@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Neuroam.IO;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,35 +9,78 @@ using System.Threading.Tasks;
 
 namespace Neuroam
 {
+    public class QueryTransaction
+    {
+        public QueryTransaction(List<long> ids)
+        {
+            TimeStamp = DateTime.Now;
+            WordIds = ids;
+            Weight = 0.0f;
+        }
+
+        public DateTime TimeStamp { get; set; }
+        public List<long> WordIds { get; set; }
+        public float Weight { get; set; }
+    }
+
     public class QueryDictionary
     {
-        Dictionary<int, string> m_Queries = new Dictionary<int, string>();
+        List<QueryTransaction> m_Queries;
+        WordDictionary m_WordDictionary;
+        QueryBuilder m_QueryBuilder;
+        JsonFile m_QueryDictionaryFile;
 
         public QueryDictionary()
         {
-            //TODO: Load the data from our json bin
+            m_Queries = new List<QueryTransaction>();
+
+            // Serialize queries
+            m_QueryDictionaryFile = new JsonFile(Constants.QueryDictionaryFileName);
+            string allData = m_QueryDictionaryFile.ReadAll();
+            if (!string.IsNullOrWhiteSpace(allData))
+            {
+                m_Queries = JsonConvert.DeserializeObject<List<QueryTransaction>>(allData);
+            }
+
+            m_WordDictionary = new WordDictionary();
+            m_QueryBuilder = new QueryBuilder(m_WordDictionary);
         }
 
         public void Add(string query)
         {
-            if (!m_Queries.ContainsValue(query))
+            QueryTransaction newQueryTransaction = m_QueryBuilder.BuildQueryTransaction(query);
+
+            if (m_Queries.Find(x => x.WordIds == newQueryTransaction.WordIds) == null)
             {
-                m_Queries.Add(m_Queries.Count, query);
+                m_Queries.Add(newQueryTransaction);
             }
         }
 
         public List<string> Find(string searchQuery)
         {
+            QueryTransaction searchQueryTransaction = m_QueryBuilder.BuildQueryTransaction(searchQuery);
             List<string> searchResults = new List<string>();
             foreach (var query in m_Queries)
             {
-                if (query.Value.Contains(searchQuery))
+                foreach(var id in searchQueryTransaction.WordIds)
                 {
-                    searchResults.Add(query.Value);
+                    if(query.WordIds.Contains(id))
+                    {
+                        searchResults.Add(m_QueryBuilder.BuildQuery(query.WordIds));
+                    }
                 }
             }
 
             return searchResults;
+        }
+
+        public void OnClose()
+        {
+            m_WordDictionary.OnClose();
+
+            Logger.Instance.Log("Flushing QueryDictionary Data");
+            string jsonData = JsonConvert.SerializeObject(m_Queries);
+            m_QueryDictionaryFile.WriteAll(jsonData);
         }
     }
 
@@ -47,12 +92,12 @@ namespace Neuroam
         public void TestFind()
         {
             QueryDictionary queryDictionary = new QueryDictionary();
-            queryDictionary.Add("test 1");
-            queryDictionary.Add("test 2");
-            queryDictionary.Add("test 3");
-            queryDictionary.Add("test 4");
+            queryDictionary.Add("unittest 1");
+            queryDictionary.Add("unittest 2");
+            queryDictionary.Add("unittest 3");
+            queryDictionary.Add("unittest 4");
 
-            Assert.IsTrue(queryDictionary.Find("test").Count == 4);
+            Assert.IsTrue(queryDictionary.Find("unittest").Count == 4);
         }
     }
     #endregion

@@ -67,9 +67,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="source\KeyCommands.cs" />
-    <Compile Include="source\QueryDictionary.cs" />
-    <Compile Include="source\QueryHandler.cs" />
+    <Compile Include="Source\Constants.cs" />
+    <Compile Include="Source\IO\JsonFile.cs" />
+    <Compile Include="Source\KeyCommands.cs" />
+    <Compile Include="Source\QueryBuilder.cs" />
+    <Compile Include="Source\QueryDictionary.cs" />
+    <Compile Include="Source\QueryHandler.cs" />
+    <Compile Include="Source\Utils\Logger.cs" />
+    <Compile Include="Source\WordDictionary.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
