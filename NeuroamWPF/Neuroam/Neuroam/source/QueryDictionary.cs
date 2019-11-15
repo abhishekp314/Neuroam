@@ -48,11 +48,14 @@ namespace Neuroam
 
         public void Add(string query)
         {
-            QueryTransaction newQueryTransaction = m_QueryBuilder.BuildQueryTransaction(query);
-
-            if (m_Queries.Find(x => x.WordIds == newQueryTransaction.WordIds) == null)
+            if (!string.IsNullOrWhiteSpace(query))
             {
-                m_Queries.Add(newQueryTransaction);
+                QueryTransaction newQueryTransaction = m_QueryBuilder.BuildQueryTransaction(query);
+
+                if (m_Queries.Find(x => x.WordIds == newQueryTransaction.WordIds) == null)
+                {
+                    m_Queries.Add(newQueryTransaction);
+                }
             }
         }
 
@@ -60,15 +63,20 @@ namespace Neuroam
         {
             QueryTransaction searchQueryTransaction = m_QueryBuilder.BuildQueryTransaction(searchQuery);
             List<string> searchResults = new List<string>();
-            foreach (var query in m_Queries)
+
+            foreach (var id in searchQueryTransaction.WordIds)
             {
-                foreach(var id in searchQueryTransaction.WordIds)
+                // Full match strategy
+                foreach (var query in m_Queries)
                 {
-                    if(query.WordIds.Contains(id))
+                    if (query.WordIds.Contains(id))
                     {
                         searchResults.Add(m_QueryBuilder.BuildQuery(query.WordIds));
                     }
                 }
+
+                // TODO: Partial matching
+
             }
 
             return searchResults;

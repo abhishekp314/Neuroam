@@ -56,7 +56,7 @@ namespace Neuroam
             return m_WordTransactions.Find(x => x.Id == id);
         }
 
-        public long Process(string word)
+        public long Add(string word)
         {
             long outId = -1;
             if (!string.IsNullOrWhiteSpace(word))
