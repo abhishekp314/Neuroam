@@ -29,5 +29,11 @@ namespace Neuroam
             Debug.Assert(ids.Count > 0);
             return new QueryTransaction(ids);
         }
+
+        public string BuildQuery(List<long> ids)
+        {
+            string outQuery = "";
+            ids.ForEach(x => m_WordDictionary.Find
+        }
     }
 }

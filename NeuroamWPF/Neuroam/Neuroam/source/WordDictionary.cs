@@ -51,6 +51,11 @@ namespace Neuroam
             return m_WordTransactions.Find(x => x.Word == word);
         }
 
+        WordTransaction Find(long id)
+        {
+            return m_WordTransactions.Find(x => x.Id == id);
+        }
+
         public long Process(string word)
         {
             string normalizedWord = NormalizeWord(word);

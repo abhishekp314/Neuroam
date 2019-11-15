@@ -18,6 +18,11 @@ namespace Neuroam
             Weight = 0.0f;
         }
 
+        public string GetValue()
+        {
+            return 
+        }
+
         public DateTime TimeStamp { get; set; }
         public List<long> WordIds { get; set; }
         public float Weight { get; set; }
@@ -58,12 +63,16 @@ namespace Neuroam
 
         public List<string> Find(string searchQuery)
         {
+            QueryTransaction searchQueryTransaction = m_QueryBuilder.BuildQueryTransaction(searchQuery);
             List<string> searchResults = new List<string>();
             foreach (var query in m_Queries)
             {
-                if (query.Value.Contains(searchQuery))
+                foreach(var id in searchQueryTransaction.WordIds)
                 {
-                    searchResults.Add(query.Value);
+                    if(query.WordIds.Contains(id))
+                    {
+                        searchResults.Add(query.Value);
+                    }
                 }
             }
 
