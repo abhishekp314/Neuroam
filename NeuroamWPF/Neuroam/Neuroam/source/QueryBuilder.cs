@@ -33,7 +33,16 @@ namespace Neuroam
         public string BuildQuery(List<long> ids)
         {
             string outQuery = "";
-            ids.ForEach(x => m_WordDictionary.Find
+            WordTransaction transaction = null;
+            foreach (var id in ids)
+            {
+                transaction = m_WordDictionary.Find(id);
+                if (transaction != null)
+                {
+                    outQuery += " " + transaction.Word;
+                }
+            }
+            return outQuery;
         }
     }
 }

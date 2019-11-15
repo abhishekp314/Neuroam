@@ -18,11 +18,6 @@ namespace Neuroam
             Weight = 0.0f;
         }
 
-        public string GetValue()
-        {
-            return 
-        }
-
         public DateTime TimeStamp { get; set; }
         public List<long> WordIds { get; set; }
         public float Weight { get; set; }
@@ -71,7 +66,7 @@ namespace Neuroam
                 {
                     if(query.WordIds.Contains(id))
                     {
-                        searchResults.Add(query.Value);
+                        searchResults.Add(m_QueryBuilder.BuildQuery(query.WordIds));
                     }
                 }
             }
@@ -83,6 +78,7 @@ namespace Neuroam
         {
             m_WordDictionary.OnClose();
 
+            Logger.Instance.Log("Flushing QueryDictionary Data");
             string jsonData = JsonConvert.SerializeObject(m_Queries);
             m_QueryDictionaryFile.WriteAll(jsonData);
         }
@@ -96,12 +92,12 @@ namespace Neuroam
         public void TestFind()
         {
             QueryDictionary queryDictionary = new QueryDictionary();
-            queryDictionary.Add("test 1");
-            queryDictionary.Add("test 2");
-            queryDictionary.Add("test 3");
-            queryDictionary.Add("test 4");
+            queryDictionary.Add("unittest 1");
+            queryDictionary.Add("unittest 2");
+            queryDictionary.Add("unittest 3");
+            queryDictionary.Add("unittest 4");
 
-            Assert.IsTrue(queryDictionary.Find("test").Count == 4);
+            Assert.IsTrue(queryDictionary.Find("unittest").Count == 4);
         }
     }
     #endregion

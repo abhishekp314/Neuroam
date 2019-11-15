@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -26,6 +27,11 @@ namespace Neuroam
             m_QueryHandler = new QueryHandler(ResultsListBox);
 
             InitializeNeuroamUIElements();
+        }
+
+        protected override void OnClosing(CancelEventArgs obj)
+        {
+            m_QueryHandler.OnClose();
         }
 
         private void InitializeNeuroamUIElements()

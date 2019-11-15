@@ -10,14 +10,25 @@ namespace Neuroam
         {
         }
 
-        public void Write(String msg)
+        void Write(string msg)
         {
             Console.WriteLine(msg);
         }
-        public void Write(String msg, Exception e)
+
+        public void Log(String msg)
         {
-            Write(msg);
-            Write(e.Message);
+            Write($"[Log] {msg}");
         }
+
+        public void LogException(String msg, Exception e)
+        {
+            Write($"[Exception] {msg}. Message: {e.Message}");
+        }
+
+        public void LogError(string msg)
+        {
+            Write($"[Error] {msg}");
+        }
+
     }
 }

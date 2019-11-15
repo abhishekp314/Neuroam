@@ -9,13 +9,16 @@ namespace Neuroam.IO
         string m_FileName;
         public JsonFile(string fileName)
         {
+            m_FileName = fileName;
+
             try
             {
-                File.Open(fileName, FileMode.OpenOrCreate);
+                FileStream stream = File.Open(m_FileName, FileMode.OpenOrCreate);
+                stream.Close();
             }
             catch (Exception e)
             {
-                Logger.Instance.Write($"Failed to open/create file {fileName}.", e);
+                Logger.Instance.LogException($"Failed to open/create file {m_FileName}.", e);
             }
         }
 
