@@ -39,6 +39,16 @@ namespace Neuroam
                     m_WordTransactions = JsonConvert.DeserializeObject<List<WordTransaction>>(allData);
                 }
             }
+
+            RebuildPartialMatches();
+        }
+
+        private void RebuildPartialMatches()
+        {
+            foreach(var wordTransaction in m_WordTransactions)
+            {
+                BuildPartialMatches(wordTransaction);
+            }
         }
 
         long GetNextId()
@@ -97,7 +107,8 @@ namespace Neuroam
             string loweredWord = newWordTranscation.Word.ToLower();
             foreach(var transcation in m_WordTransactions)
             {
-                if(transcation.Word.ToLower().Contains(loweredWord))
+                string transcationWordLowered = transcation.Word.ToLower();
+                if(transcationWordLowered.Contains(loweredWord) || loweredWord.Contains(transcationWordLowered))
                 {
                     if(!transcation.m_WordPartialMatches.Contains(newWordTranscation.Id))
                     {
