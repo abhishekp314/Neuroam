@@ -14,25 +14,30 @@ namespace Neuroam
         {
             Id = id;
             Word = word;
+            m_WordPartialMatches = new List<long>();
         }
 
         public long Id { get; set; }
         public string Word { get; set; }
+        public List<long> m_WordPartialMatches { get; set; }
     }
 
     public class WordDictionary
     {
         List<WordTransaction> m_WordTransactions = new List<WordTransaction>();
         JsonFile m_WordDictionaryFile;
-        public WordDictionary()
+        public WordDictionary(bool inMemoryOnly = false)
         {
             m_WordDictionaryFile = new JsonFile(Constants.WordDictionaryFileName);
             string allData = m_WordDictionaryFile.ReadAll();
 
-            // Serialize the dictionary
-            if(!string.IsNullOrWhiteSpace(allData))
+            if (!inMemoryOnly)
             {
-                m_WordTransactions = JsonConvert.DeserializeObject<List<WordTransaction>>(allData);
+                // Serialize the dictionary
+                if (!string.IsNullOrWhiteSpace(allData))
+                {
+                    m_WordTransactions = JsonConvert.DeserializeObject<List<WordTransaction>>(allData);
+                }
             }
         }
 
@@ -48,12 +53,63 @@ namespace Neuroam
 
         WordTransaction Find(string word)
         {
-            return m_WordTransactions.Find(x => x.Word == word);
+            string loweredWord = word.ToLower();
+            return m_WordTransactions.Find(x => x.Word.ToLower() == loweredWord);
         }
 
+        /// <summary>
+        /// This function returns a partial match list
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public List<long> FindPartialMatches(long id)
+        {
+            WordTransaction transaction = m_WordTransactions.Find(x => x.Id == id);
+            if(transaction != null)
+            {
+                return transaction.m_WordPartialMatches;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// This function returns a full match
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public WordTransaction Find(long id)
         {
-            return m_WordTransactions.Find(x => x.Id == id);
+            List<WordTransaction> matches = new List<WordTransaction>();
+            foreach (var transaction in m_WordTransactions)
+            {
+                if(transaction.Id == id)
+                {
+                    return transaction;
+                }
+            }
+
+            return null;
+        }
+
+        public void BuildPartialMatches(WordTransaction newWordTranscation)
+        {
+            string loweredWord = newWordTranscation.Word.ToLower();
+            foreach(var transcation in m_WordTransactions)
+            {
+                if(transcation.Word.ToLower().Contains(loweredWord))
+                {
+                    if(!transcation.m_WordPartialMatches.Contains(newWordTranscation.Id))
+                    {
+                        transcation.m_WordPartialMatches.Add(newWordTranscation.Id);
+                    }
+
+                    if (!newWordTranscation.m_WordPartialMatches.Contains(transcation.Id))
+                    {
+                        newWordTranscation.m_WordPartialMatches.Add(transcation.Id);
+                    }
+                }
+            }
         }
 
         public long Add(string word)
@@ -66,7 +122,9 @@ namespace Neuroam
                 if (exists == null)
                 {
                     outId = GetNextId();
-                    m_WordTransactions.Add(new WordTransaction(outId, normalizedWord));
+                    WordTransaction newWord = new WordTransaction(outId, normalizedWord);
+                    BuildPartialMatches(newWord);
+                    m_WordTransactions.Add(newWord);
                 }
                 else
                 {
@@ -80,9 +138,12 @@ namespace Neuroam
         {
             Logger.Instance.Log("Flushing WordDictionary Data");
 
-            // Write all the data to the file
-            string jsonData = JsonConvert.SerializeObject(m_WordTransactions);
-            m_WordDictionaryFile.WriteAll(jsonData);
+            if(m_WordDictionaryFile != null)
+            {
+                // Write all the data to the file
+                string jsonData = JsonConvert.SerializeObject(m_WordTransactions);
+                m_WordDictionaryFile.WriteAll(jsonData);
+            }
         }
     }
 }

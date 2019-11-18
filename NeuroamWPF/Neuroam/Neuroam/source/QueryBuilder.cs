@@ -21,8 +21,6 @@ namespace Neuroam
 
         public QueryTransaction BuildQueryTransaction(string query)
         {
-            Debug.Assert(string.IsNullOrWhiteSpace(query));
-
             List<long> ids = new List<long>();
             foreach(var word in TokenizeQueryIntoWords(query))
             {
