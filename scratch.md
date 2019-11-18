@@ -2,10 +2,12 @@
 
 ### Things TODO
 - [] Json interface to load/store data on disk
-- [] Dictionary of words in query (include words, words with special characters...)
-- [] Store the combination of id of words from dictionary
+- [x] Dictionary of words in query (include words, words with special characters...)
+- [x] Store the combination of id of words from dictionary
 - [] Weighing the transactions
 - [] Ranking the transactions
+- [] Parallel search queries
+- [] Caching fixed buffer in memory and seeking mechanism of partial data from disk
 
 ### Dictonary
 A dictionary is collection of words with a unique id.
