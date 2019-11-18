@@ -24,9 +24,8 @@ namespace Neuroam
             List<long> ids = new List<long>();
             foreach(var word in TokenizeQueryIntoWords(query))
             {
-                ids.Add(m_WordDictionary.Process(word));
+                ids.Add(m_WordDictionary.Add(word));
             }
-            Debug.Assert(ids.Count > 0);
             return new QueryTransaction(ids);
         }
 

@@ -30,43 +30,86 @@ namespace Neuroam
         QueryBuilder m_QueryBuilder;
         JsonFile m_QueryDictionaryFile;
 
-        public QueryDictionary()
+        public QueryDictionary(bool inMemoryOnly = false)
         {
             m_Queries = new List<QueryTransaction>();
 
-            // Serialize queries
-            m_QueryDictionaryFile = new JsonFile(Constants.QueryDictionaryFileName);
-            string allData = m_QueryDictionaryFile.ReadAll();
-            if (!string.IsNullOrWhiteSpace(allData))
+            if (!inMemoryOnly)
             {
-                m_Queries = JsonConvert.DeserializeObject<List<QueryTransaction>>(allData);
+                // Serialize queries
+                m_QueryDictionaryFile = new JsonFile(Constants.QueryDictionaryFileName);
+                string allData = m_QueryDictionaryFile.ReadAll();
+                if (!string.IsNullOrWhiteSpace(allData))
+                {
+                    m_Queries = JsonConvert.DeserializeObject<List<QueryTransaction>>(allData);
+                }
             }
 
-            m_WordDictionary = new WordDictionary();
+            m_WordDictionary = new WordDictionary(inMemoryOnly);
             m_QueryBuilder = new QueryBuilder(m_WordDictionary);
         }
 
-        public void Add(string query)
+        public void Add(string queryData)
         {
-            QueryTransaction newQueryTransaction = m_QueryBuilder.BuildQueryTransaction(query);
-
-            if (m_Queries.Find(x => x.WordIds == newQueryTransaction.WordIds) == null)
+            if (!string.IsNullOrWhiteSpace(queryData))
             {
-                m_Queries.Add(newQueryTransaction);
+                QueryTransaction newQueryTransaction = m_QueryBuilder.BuildQueryTransaction(queryData);
+
+                bool queryExists = false;
+                foreach (var query in m_Queries)
+                {
+                    if(query.WordIds.SequenceEqual(newQueryTransaction.WordIds))
+                    {
+                        queryExists = true;
+                        break;
+                    }
+                }
+
+                if (!queryExists)
+                {
+                    m_Queries.Add(newQueryTransaction);
+                }
             }
         }
 
         public List<string> Find(string searchQuery)
         {
-            QueryTransaction searchQueryTransaction = m_QueryBuilder.BuildQueryTransaction(searchQuery);
             List<string> searchResults = new List<string>();
-            foreach (var query in m_Queries)
+
+            if (!string.IsNullOrEmpty(searchQuery))
             {
-                foreach(var id in searchQueryTransaction.WordIds)
+                QueryTransaction searchQueryTransaction = m_QueryBuilder.BuildQueryTransaction(searchQuery);
+
+                foreach (var searchWordId in searchQueryTransaction.WordIds)
                 {
-                    if(query.WordIds.Contains(id))
+                    // Get partial search matches for the searchWordId
+                    List<long> partialSearchMatches = m_WordDictionary.FindPartialMatches(searchWordId);
+
+                    // Full and partial match strategy
+                    foreach (var query in m_Queries)
                     {
-                        searchResults.Add(m_QueryBuilder.BuildQuery(query.WordIds));
+                        bool matchFound = false;
+
+                        // Full match
+                        if (query.WordIds.Contains(searchWordId))
+                        {
+                            matchFound = true;
+                        }
+                        else
+                        {
+                            // Partial match
+                            foreach (var queryWordId in query.WordIds)
+                            {
+                                if (partialSearchMatches.Contains(queryWordId))
+                                {
+                                    matchFound = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (matchFound)
+                            searchResults.Add(m_QueryBuilder.BuildQuery(query.WordIds));
                     }
                 }
             }
@@ -78,9 +121,12 @@ namespace Neuroam
         {
             m_WordDictionary.OnClose();
 
-            Logger.Instance.Log("Flushing QueryDictionary Data");
-            string jsonData = JsonConvert.SerializeObject(m_Queries);
-            m_QueryDictionaryFile.WriteAll(jsonData);
+            if (m_QueryDictionaryFile != null)
+            {
+                Logger.Instance.Log("Flushing QueryDictionary Data");
+                string jsonData = JsonConvert.SerializeObject(m_Queries);
+                m_QueryDictionaryFile.WriteAll(jsonData);
+            }
         }
     }
 
@@ -88,16 +134,41 @@ namespace Neuroam
     [TestClass]
     public class QueryDictionaryTest
     {
+        QueryDictionary m_QueryDictionary = new QueryDictionary(true);
+
+        [TestMethod]
+        public void TestAdd()
+        {
+            m_QueryDictionary.Add("");
+            Assert.IsTrue(m_QueryDictionary.Find("").Count == 0);
+
+            m_QueryDictionary.Add("adder");
+            m_QueryDictionary.Add("adder");
+
+            Assert.IsTrue(m_QueryDictionary.Find("adder").Count == 1);
+        }
+
         [TestMethod]
         public void TestFind()
         {
-            QueryDictionary queryDictionary = new QueryDictionary();
-            queryDictionary.Add("unittest 1");
-            queryDictionary.Add("unittest 2");
-            queryDictionary.Add("unittest 3");
-            queryDictionary.Add("unittest 4");
+            m_QueryDictionary.Add("unittest 1");
+            m_QueryDictionary.Add("unittest 2");
+            m_QueryDictionary.Add("unittest 3");
+            m_QueryDictionary.Add("unittest 4");
 
-            Assert.IsTrue(queryDictionary.Find("unittest").Count == 4);
+            Assert.IsTrue(m_QueryDictionary.Find("unittest").Count == 4);
+        }
+
+        [TestMethod]
+        public void TestPartialFind()
+        {
+            m_QueryDictionary.Add("unittest 1");
+            m_QueryDictionary.Add("unittest 2");
+            m_QueryDictionary.Add("unittest 3");
+            m_QueryDictionary.Add("unittest 4");
+
+            Assert.IsTrue(m_QueryDictionary.Find("unit").Count == 4);
+            Assert.IsTrue(m_QueryDictionary.Find("test").Count == 4);
         }
     }
     #endregion
