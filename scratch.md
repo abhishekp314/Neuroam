@@ -23,3 +23,5 @@ A transaction is something that could be stored/retrevied from a json structure.
 * Datetime
 * Ids of Query (referenced from Dictionary)
 * Rank/Weight
+
+### Versioning of Query data
