@@ -79,7 +79,7 @@ namespace Neuroam
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 QueryTransaction searchQueryTransaction = m_QueryBuilder.BuildQueryTransaction(searchQuery);
-
+                List<QueryTransaction> matchedQueryTransactions = new List<QueryTransaction>();
                 foreach (var searchWordId in searchQueryTransaction.WordIds)
                 {
                     // Get partial search matches for the searchWordId
@@ -108,8 +108,12 @@ namespace Neuroam
                             }
                         }
 
-                        if (matchFound)
+                        // Filter out redundant matched queries
+                        if (matchFound && !matchedQueryTransactions.Contains(query))
+                        {
+                            matchedQueryTransactions.Add(query);
                             searchResults.Add(m_QueryBuilder.BuildQuery(query.WordIds));
+                        }
                     }
                 }
             }
@@ -158,6 +162,7 @@ namespace Neuroam
             m_QueryDictionary.Add("unittest 4");
 
             Assert.IsTrue(m_QueryDictionary.Find("unittest").Count == 4);
+            Assert.IsTrue(m_QueryDictionary.Find("unittest 1").Count == 4);
         }
 
         [TestMethod]
