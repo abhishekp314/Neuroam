@@ -146,6 +146,7 @@ namespace Neuroam
             m_QueryDictionary.Add("adder");
 
             Assert.IsTrue(m_QueryDictionary.Find("adder").Count == 1);
+            Assert.IsTrue(m_QueryDictionary.Find("adder ").Count == 1);
         }
 
         [TestMethod]
