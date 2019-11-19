@@ -14,12 +14,12 @@ namespace Neuroam
         {
             Id = id;
             Word = word;
-            m_WordPartialMatches = new List<long>();
+            WordPartialMatches = new List<long>();
         }
 
         public long Id { get; set; }
         public string Word { get; set; }
-        public List<long> m_WordPartialMatches { get; set; }
+        public List<long> WordPartialMatches { get; set; }
     }
 
     public class WordDictionary
@@ -77,7 +77,7 @@ namespace Neuroam
             WordTransaction transaction = m_WordTransactions.Find(x => x.Id == id);
             if(transaction != null)
             {
-                return transaction.m_WordPartialMatches;
+                return transaction.WordPartialMatches;
             }
 
             return null;
@@ -110,14 +110,15 @@ namespace Neuroam
                 string transcationWordLowered = transcation.Word.ToLower();
                 if(transcationWordLowered.Contains(loweredWord) || loweredWord.Contains(transcationWordLowered))
                 {
-                    if(!transcation.m_WordPartialMatches.Contains(newWordTranscation.Id))
+                    // Create 2-way partial match ids
+                    if(!transcation.WordPartialMatches.Contains(newWordTranscation.Id))
                     {
-                        transcation.m_WordPartialMatches.Add(newWordTranscation.Id);
+                        transcation.WordPartialMatches.Add(newWordTranscation.Id);
                     }
 
-                    if (!newWordTranscation.m_WordPartialMatches.Contains(transcation.Id))
+                    if (!newWordTranscation.WordPartialMatches.Contains(transcation.Id))
                     {
-                        newWordTranscation.m_WordPartialMatches.Add(transcation.Id);
+                        newWordTranscation.WordPartialMatches.Add(transcation.Id);
                     }
                 }
             }
