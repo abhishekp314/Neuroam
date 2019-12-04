@@ -4,8 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Timers;
 
 namespace Neuroam
 {
@@ -29,6 +28,8 @@ namespace Neuroam
         WordDictionary m_WordDictionary;
         QueryBuilder m_QueryBuilder;
         JsonFile m_QueryDictionaryFile;
+        Timer m_SaveTimer;
+        bool m_IsDictionaryDirty = false;
 
         public QueryDictionary(bool inMemoryOnly = false)
         {
@@ -47,6 +48,29 @@ namespace Neuroam
 
             m_WordDictionary = new WordDictionary(inMemoryOnly);
             m_QueryBuilder = new QueryBuilder(m_WordDictionary);
+
+            // Create save timer that flushes the changes inmemory to disk when dirty
+            m_SaveTimer = new Timer(Constants.SaveInterval);
+            m_SaveTimer.Elapsed += OnSaveEvent;
+            m_SaveTimer.AutoReset = true;
+            m_SaveTimer.Enabled = true;
+        }
+
+        public void OnSaveEvent(Object source, ElapsedEventArgs e)
+        {
+            m_WordDictionary.Save();
+            Save();
+        }
+
+        void Save()
+        {
+            if (m_QueryDictionaryFile != null && m_IsDictionaryDirty)
+            {
+                Logger.Instance.Log("Saving QueryDictionary to disk");
+                string jsonData = JsonConvert.SerializeObject(m_Queries);
+                m_QueryDictionaryFile.WriteAll(jsonData);
+                m_IsDictionaryDirty = false;
+            }
         }
 
         public void Add(string queryData)
@@ -68,6 +92,7 @@ namespace Neuroam
                 if (!queryExists)
                 {
                     m_Queries.Add(newQueryTransaction);
+                    m_IsDictionaryDirty = true;
                 }
             }
         }
@@ -125,12 +150,7 @@ namespace Neuroam
         {
             m_WordDictionary.OnClose();
 
-            if (m_QueryDictionaryFile != null)
-            {
-                Logger.Instance.Log("Flushing QueryDictionary Data");
-                string jsonData = JsonConvert.SerializeObject(m_Queries);
-                m_QueryDictionaryFile.WriteAll(jsonData);
-            }
+            Save();
         }
     }
 

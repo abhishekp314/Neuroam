@@ -26,6 +26,8 @@ namespace Neuroam
     {
         List<WordTransaction> m_WordTransactions = new List<WordTransaction>();
         JsonFile m_WordDictionaryFile;
+        bool m_IsDictionaryDirty = false;
+
         public WordDictionary(bool inMemoryOnly = false)
         {
             m_WordDictionaryFile = new JsonFile(Constants.WordDictionaryFileName);
@@ -137,6 +139,7 @@ namespace Neuroam
                     WordTransaction newWord = new WordTransaction(outId, normalizedWord);
                     BuildPartialMatches(newWord);
                     m_WordTransactions.Add(newWord);
+                    m_IsDictionaryDirty = true;
                 }
                 else
                 {
@@ -146,16 +149,22 @@ namespace Neuroam
             return outId;
         }
 
-        public void OnClose()
+        public void Save()
         {
-            Logger.Instance.Log("Flushing WordDictionary Data");
-
-            if(m_WordDictionaryFile != null)
+            if (m_WordDictionaryFile != null && m_IsDictionaryDirty)
             {
+                Logger.Instance.Log("Saving WordDictionary to disk");
+
                 // Write all the data to the file
                 string jsonData = JsonConvert.SerializeObject(m_WordTransactions);
                 m_WordDictionaryFile.WriteAll(jsonData);
+                m_IsDictionaryDirty = false;
             }
+        }
+
+        public void OnClose()
+        {
+            Save();
         }
     }
 }

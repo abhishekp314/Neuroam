@@ -1,9 +1,10 @@
 # Neuroam Scratch
 
 ### Things TODO
-- [] Json interface to load/store data on disk
+- [x] Json interface to load/store data on disk
 - [x] Dictionary of words in query (include words, words with special characters...)
 - [x] Store the combination of id of words from dictionary
+- [x] Periodic flush of dictionary to disk in case of changes
 - [] Weighing the transactions
 - [] Ranking the transactions
 - [] Parallel search queries

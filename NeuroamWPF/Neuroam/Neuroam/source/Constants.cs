@@ -10,5 +10,6 @@ namespace Neuroam
     {
         public const string WordDictionaryFileName = "WordDictionary.json";
         public const string QueryDictionaryFileName = "QueryDictionary.json";
+        public const int SaveInterval = 10000;
     }
 }
