@@ -1,0 +1,7 @@
+[SearchableFiles.include]
+*.cpp
+*.c
+*.h
+*.vcxproj
+*.sln
+*.md

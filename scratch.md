@@ -1,5 +1,11 @@
 # Neuroam Scratch
 
+### Tech
+- C++ with Clang compiler
+- JsonC++ for IO
+- Sharpmake for project generation
+- Judy API
+
 ### Things TODO
 - [x] Json interface to load/store data on disk
 - [x] Dictionary of words in query (include words, words with special characters...)

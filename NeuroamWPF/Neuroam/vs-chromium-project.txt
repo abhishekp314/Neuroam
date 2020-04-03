@@ -1,0 +1,6 @@
+[SearchableFiles.include]
+*.cs
+*.vcxproj
+*.sln
+*.xaml
+*.md
