@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Neuroam
+namespace NeuroamCore
 {
     public class Logger
     {

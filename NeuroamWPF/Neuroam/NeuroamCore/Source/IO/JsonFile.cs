@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
-using Newtonsoft.Json;
 
-namespace Neuroam.IO
+namespace NeuroamCore.IO
 {
     public class JsonFile
     {

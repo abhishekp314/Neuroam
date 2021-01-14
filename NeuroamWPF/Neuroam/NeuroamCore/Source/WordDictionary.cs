@@ -1,4 +1,4 @@
-﻿using Neuroam.IO;
+﻿using NeuroamCore.IO;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Neuroam
+namespace NeuroamCore
 {
     public class WordTransaction
     {
@@ -30,11 +30,11 @@ namespace Neuroam
 
         public WordDictionary(bool inMemoryOnly = false)
         {
-            m_WordDictionaryFile = new JsonFile(Constants.WordDictionaryFileName);
-            string allData = m_WordDictionaryFile.ReadAll();
-
             if (!inMemoryOnly)
             {
+                m_WordDictionaryFile = new JsonFile(Constants.WordDictionaryFileName);
+                string allData = m_WordDictionaryFile.ReadAll();
+
                 // Serialize the dictionary
                 if (!string.IsNullOrWhiteSpace(allData))
                 {
@@ -147,6 +147,11 @@ namespace Neuroam
                 }
             }
             return outId;
+        }
+
+        public void Clear()
+        {
+            m_WordTransactions.Clear();
         }
 
         public void Save()

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Neuroam
+namespace NeuroamCore
 {
     public static class Constants
     {

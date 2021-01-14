@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using NeuroamCore;
 
 namespace Neuroam
 {
@@ -18,13 +19,14 @@ namespace Neuroam
         {
             if (!inFlightQuery.Equals(CurrentQuery))
             {
-                // Tokenize and search again
                 CurrentQuery = inFlightQuery;
+                m_QueryDictionary.Query(CurrentQuery);
+                m_ResultsListBox.ItemsSource = m_QueryDictionary.Find(CurrentQuery);
             }
         }
         public void OnFinalizeQuery()
         {
-            m_QueryDictionary.Add(CurrentQuery);
+            m_QueryDictionary.Query(CurrentQuery, true /*Add this query to the dictionary*/);
             m_ResultsListBox.ItemsSource = m_QueryDictionary.Find(CurrentQuery);
         }
 

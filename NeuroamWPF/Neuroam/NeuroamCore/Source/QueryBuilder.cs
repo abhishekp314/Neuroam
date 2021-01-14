@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Neuroam
+namespace NeuroamCore
 {
     public class QueryBuilder
     {
@@ -41,10 +41,10 @@ namespace Neuroam
                 transaction = m_WordDictionary.Find(id);
                 if (transaction != null)
                 {
-                    outQuery += " " + transaction.Word;
+                    outQuery += transaction.Word + " ";
                 }
             }
-            return outQuery;
+            return outQuery.Trim();
         }
     }
 }
